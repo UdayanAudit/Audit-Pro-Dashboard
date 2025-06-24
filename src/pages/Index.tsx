@@ -416,40 +416,51 @@ const Index = () => {
                 <div>
                   <CardTitle className="text-lg">Professional Tax</CardTitle>
                   <CardDescription>
-                    Reconcile professional tax declarations
+                    Upload professional tax documents
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Declared Amount (₹)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter declared amount"
-                  value={declaredPTax}
-                  onChange={(e) => setDeclaredPTax(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Verified Amount (₹)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter verified amount"
-                  value={verifiedPTax}
-                  onChange={(e) => setVerifiedPTax(e.target.value)}
-                />
-              </div>
+              <FileUpload
+                id="declared-ptax-docs"
+                label="Declared P-Tax Documents"
+                description="Upload declarations, forms"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setDeclaredPTaxDocs}
+              />
+              <FileUpload
+                id="verified-ptax-docs"
+                label="Verified P-Tax Documents"
+                description="Upload payment receipts, challans"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setVerifiedPTaxDocs}
+              />
               <Button
                 onClick={handleProfessionalTax}
                 className="w-full"
                 size="sm"
+                disabled={
+                  declaredPTaxDocs.length === 0 ||
+                  verifiedPTaxDocs.length === 0 ||
+                  ptaxProcessing
+                }
               >
-                Verify P-Tax
+                {ptaxProcessing ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing Documents...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Verify P-Tax Documents
+                  </>
+                )}
               </Button>
 
               {ptaxResult && (
@@ -471,7 +482,7 @@ const Index = () => {
                       <p
                         className={`font-medium ${ptaxResult.difference >= 0 ? "text-audit-error" : "text-audit-success"}`}
                       >
-                        ₹{Math.abs(ptaxResult.difference).toLocaleString()}
+                        ���{Math.abs(ptaxResult.difference).toLocaleString()}
                       </p>
                     </div>
                     <div>
