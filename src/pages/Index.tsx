@@ -75,53 +75,80 @@ const Index = () => {
   const [bankResult, setBankResult] = useState<BankVouchingResult | null>(null);
   const [bankProcessing, setBankProcessing] = useState(false);
 
-  const handleTaxAudit = () => {
-    if (taxIncome) {
-      const result = calculateTaxAudit({
-        taxableIncome: parseFloat(taxIncome),
-      });
-      setTaxResult(result);
-    }
+  const handleTaxAudit = async () => {
+    if (taxDocuments.length === 0) return;
+
+    setTaxProcessing(true);
+    // Simulate document processing delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Demo: Extract mock data for calculation
+    const result = calculateTaxAudit({
+      taxableIncome: 850000, // Mock extracted value
+    });
+    setTaxResult(result);
+    setTaxProcessing(false);
   };
 
-  const handleSalaryReconciliation = () => {
-    if (reportedSalary && actualSalary) {
-      const result = calculateSalaryReconciliation({
-        reportedSalary: parseFloat(reportedSalary),
-        actualSalary: parseFloat(actualSalary),
-      });
-      setSalaryResult(result);
-    }
+  const handleSalaryReconciliation = async () => {
+    if (reportedSalaryDocs.length === 0 || actualSalaryDocs.length === 0)
+      return;
+
+    setSalaryProcessing(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Demo: Extract mock data for calculation
+    const result = calculateSalaryReconciliation({
+      reportedSalary: 750000, // Mock extracted value
+      actualSalary: 780000, // Mock extracted value
+    });
+    setSalaryResult(result);
+    setSalaryProcessing(false);
   };
 
-  const handleProfessionalTax = () => {
-    if (declaredPTax && verifiedPTax) {
-      const result = calculateProfessionalTax({
-        declaredAmount: parseFloat(declaredPTax),
-        verifiedAmount: parseFloat(verifiedPTax),
-      });
-      setPtaxResult(result);
-    }
+  const handleProfessionalTax = async () => {
+    if (declaredPTaxDocs.length === 0 || verifiedPTaxDocs.length === 0) return;
+
+    setPtaxProcessing(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Demo: Extract mock data for calculation
+    const result = calculateProfessionalTax({
+      declaredAmount: 18000, // Mock extracted value
+      verifiedAmount: 20000, // Mock extracted value
+    });
+    setPtaxResult(result);
+    setPtaxProcessing(false);
   };
 
-  const handleOpeningBalance = () => {
-    if (bookBalance && auditedBalance) {
-      const result = calculateOpeningBalance({
-        bookBalance: parseFloat(bookBalance),
-        auditedBalance: parseFloat(auditedBalance),
-      });
-      setBalanceResult(result);
-    }
+  const handleOpeningBalance = async () => {
+    if (bookBalanceDocs.length === 0 || auditedBalanceDocs.length === 0) return;
+
+    setBalanceProcessing(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Demo: Extract mock data for calculation
+    const result = calculateOpeningBalance({
+      bookBalance: 2500000, // Mock extracted value
+      auditedBalance: 2485000, // Mock extracted value
+    });
+    setBalanceResult(result);
+    setBalanceProcessing(false);
   };
 
-  const handleBankVouching = () => {
-    if (bankStatement && cashBook) {
-      const result = calculateBankVouching({
-        bankStatement: parseFloat(bankStatement),
-        cashBook: parseFloat(cashBook),
-      });
-      setBankResult(result);
-    }
+  const handleBankVouching = async () => {
+    if (bankStatementDocs.length === 0 || cashBookDocs.length === 0) return;
+
+    setBankProcessing(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Demo: Extract mock data for calculation
+    const result = calculateBankVouching({
+      bankStatement: 1250000, // Mock extracted value
+      cashBook: 1245000, // Mock extracted value
+    });
+    setBankResult(result);
+    setBankProcessing(false);
   };
 
   const getStatusIcon = (status: string) => {
