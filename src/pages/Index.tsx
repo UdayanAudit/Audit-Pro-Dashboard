@@ -37,32 +37,43 @@ import {
 
 const Index = () => {
   // Tool 1: Tax Audit Verification
-  const [taxIncome, setTaxIncome] = useState("");
+  const [taxDocuments, setTaxDocuments] = useState<UploadedFile[]>([]);
   const [taxResult, setTaxResult] = useState<TaxAuditResult | null>(null);
+  const [taxProcessing, setTaxProcessing] = useState(false);
 
   // Tool 2: Salary Reconciliation
-  const [reportedSalary, setReportedSalary] = useState("");
-  const [actualSalary, setActualSalary] = useState("");
+  const [reportedSalaryDocs, setReportedSalaryDocs] = useState<UploadedFile[]>(
+    [],
+  );
+  const [actualSalaryDocs, setActualSalaryDocs] = useState<UploadedFile[]>([]);
   const [salaryResult, setSalaryResult] =
     useState<SalaryReconciliationResult | null>(null);
+  const [salaryProcessing, setSalaryProcessing] = useState(false);
 
   // Tool 3: Professional Tax Reconciliation
-  const [declaredPTax, setDeclaredPTax] = useState("");
-  const [verifiedPTax, setVerifiedPTax] = useState("");
+  const [declaredPTaxDocs, setDeclaredPTaxDocs] = useState<UploadedFile[]>([]);
+  const [verifiedPTaxDocs, setVerifiedPTaxDocs] = useState<UploadedFile[]>([]);
   const [ptaxResult, setPtaxResult] = useState<ProfessionalTaxResult | null>(
     null,
   );
+  const [ptaxProcessing, setPtaxProcessing] = useState(false);
 
   // Tool 4: Opening Balance Verification
-  const [bookBalance, setBookBalance] = useState("");
-  const [auditedBalance, setAuditedBalance] = useState("");
+  const [bookBalanceDocs, setBookBalanceDocs] = useState<UploadedFile[]>([]);
+  const [auditedBalanceDocs, setAuditedBalanceDocs] = useState<UploadedFile[]>(
+    [],
+  );
   const [balanceResult, setBalanceResult] =
     useState<OpeningBalanceResult | null>(null);
+  const [balanceProcessing, setBalanceProcessing] = useState(false);
 
   // Tool 5: Bank Vouching
-  const [bankStatement, setBankStatement] = useState("");
-  const [cashBook, setCashBook] = useState("");
+  const [bankStatementDocs, setBankStatementDocs] = useState<UploadedFile[]>(
+    [],
+  );
+  const [cashBookDocs, setCashBookDocs] = useState<UploadedFile[]>([]);
   const [bankResult, setBankResult] = useState<BankVouchingResult | null>(null);
+  const [bankProcessing, setBankProcessing] = useState(false);
 
   const handleTaxAudit = () => {
     if (taxIncome) {
