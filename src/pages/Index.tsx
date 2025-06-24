@@ -77,10 +77,10 @@ const Index = () => {
         "Compliance Monitoring",
       ],
       acceptedDocs: [
-        "P-Tax Forms",
-        "Payment Receipts",
-        "Challans",
-        "Declarations",
+        "Salary Ledgers",
+        "Salary Registers",
+        "Pt Challans",
+        "Pt registers",
       ],
     },
     {
