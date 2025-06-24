@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -9,762 +10,324 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { FileUpload, type UploadedFile } from "@/components/ui/file-upload";
 import {
   Calculator,
   TrendingUp,
   Shield,
   Scale,
   CreditCard,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Info,
+  ArrowRight,
   FileText,
+  Upload,
 } from "lucide-react";
-import {
-  calculateTaxAudit,
-  calculateSalaryReconciliation,
-  calculateProfessionalTax,
-  calculateOpeningBalance,
-  calculateBankVouching,
-  type TaxAuditResult,
-  type SalaryReconciliationResult,
-  type ProfessionalTaxResult,
-  type OpeningBalanceResult,
-  type BankVouchingResult,
-} from "@/lib/audit-calculations";
 
 const Index = () => {
-  // Tool 1: Tax Audit Verification
-  const [taxDocuments, setTaxDocuments] = useState<UploadedFile[]>([]);
-  const [taxResult, setTaxResult] = useState<TaxAuditResult | null>(null);
-  const [taxProcessing, setTaxProcessing] = useState(false);
-
-  // Tool 2: Salary Reconciliation
-  const [reportedSalaryDocs, setReportedSalaryDocs] = useState<UploadedFile[]>(
-    [],
-  );
-  const [actualSalaryDocs, setActualSalaryDocs] = useState<UploadedFile[]>([]);
-  const [salaryResult, setSalaryResult] =
-    useState<SalaryReconciliationResult | null>(null);
-  const [salaryProcessing, setSalaryProcessing] = useState(false);
-
-  // Tool 3: Professional Tax Reconciliation
-  const [declaredPTaxDocs, setDeclaredPTaxDocs] = useState<UploadedFile[]>([]);
-  const [verifiedPTaxDocs, setVerifiedPTaxDocs] = useState<UploadedFile[]>([]);
-  const [ptaxResult, setPtaxResult] = useState<ProfessionalTaxResult | null>(
-    null,
-  );
-  const [ptaxProcessing, setPtaxProcessing] = useState(false);
-
-  // Tool 4: Opening Balance Verification
-  const [bookBalanceDocs, setBookBalanceDocs] = useState<UploadedFile[]>([]);
-  const [auditedBalanceDocs, setAuditedBalanceDocs] = useState<UploadedFile[]>(
-    [],
-  );
-  const [balanceResult, setBalanceResult] =
-    useState<OpeningBalanceResult | null>(null);
-  const [balanceProcessing, setBalanceProcessing] = useState(false);
-
-  // Tool 5: Bank Vouching
-  const [bankStatementDocs, setBankStatementDocs] = useState<UploadedFile[]>(
-    [],
-  );
-  const [cashBookDocs, setCashBookDocs] = useState<UploadedFile[]>([]);
-  const [bankResult, setBankResult] = useState<BankVouchingResult | null>(null);
-  const [bankProcessing, setBankProcessing] = useState(false);
-
-  const handleTaxAudit = async () => {
-    if (taxDocuments.length === 0) return;
-
-    setTaxProcessing(true);
-    // Simulate document processing delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Demo: Extract mock data for calculation
-    const result = calculateTaxAudit({
-      taxableIncome: 850000, // Mock extracted value
-    });
-    setTaxResult(result);
-    setTaxProcessing(false);
-  };
-
-  const handleSalaryReconciliation = async () => {
-    if (reportedSalaryDocs.length === 0 || actualSalaryDocs.length === 0)
-      return;
-
-    setSalaryProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Demo: Extract mock data for calculation
-    const result = calculateSalaryReconciliation({
-      reportedSalary: 750000, // Mock extracted value
-      actualSalary: 780000, // Mock extracted value
-    });
-    setSalaryResult(result);
-    setSalaryProcessing(false);
-  };
-
-  const handleProfessionalTax = async () => {
-    if (declaredPTaxDocs.length === 0 || verifiedPTaxDocs.length === 0) return;
-
-    setPtaxProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Demo: Extract mock data for calculation
-    const result = calculateProfessionalTax({
-      declaredAmount: 18000, // Mock extracted value
-      verifiedAmount: 20000, // Mock extracted value
-    });
-    setPtaxResult(result);
-    setPtaxProcessing(false);
-  };
-
-  const handleOpeningBalance = async () => {
-    if (bookBalanceDocs.length === 0 || auditedBalanceDocs.length === 0) return;
-
-    setBalanceProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Demo: Extract mock data for calculation
-    const result = calculateOpeningBalance({
-      bookBalance: 2500000, // Mock extracted value
-      auditedBalance: 2485000, // Mock extracted value
-    });
-    setBalanceResult(result);
-    setBalanceProcessing(false);
-  };
-
-  const handleBankVouching = async () => {
-    if (bankStatementDocs.length === 0 || cashBookDocs.length === 0) return;
-
-    setBankProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Demo: Extract mock data for calculation
-    const result = calculateBankVouching({
-      bankStatement: 1250000, // Mock extracted value
-      cashBook: 1245000, // Mock extracted value
-    });
-    setBankResult(result);
-    setBankProcessing(false);
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "compliant":
-      case "matched":
-      case "low":
-        return <CheckCircle className="h-4 w-4 text-audit-success" />;
-      case "medium":
-        return <AlertTriangle className="h-4 w-4 text-audit-warning" />;
-      case "high":
-      case "non-compliant":
-      case "variance detected":
-        return <XCircle className="h-4 w-4 text-audit-error" />;
-      default:
-        return <Info className="h-4 w-4 text-audit-info" />;
-    }
-  };
-
-  const getStatusBadge = (
-    status: string,
-    type: "success" | "warning" | "error" | "info" = "info",
-  ) => {
-    const variants = {
-      success: "bg-audit-success/10 text-audit-success border-audit-success/20",
-      warning: "bg-audit-warning/10 text-audit-warning border-audit-warning/20",
-      error: "bg-audit-error/10 text-audit-error border-audit-error/20",
-      info: "bg-audit-info/10 text-audit-info border-audit-info/20",
-    };
-
-    return (
-      <Badge variant="outline" className={variants[type]}>
-        {getStatusIcon(status)}
-        <span className="ml-1">{status}</span>
-      </Badge>
-    );
-  };
+  const auditTools = [
+    {
+      id: "tax-audit",
+      title: "Tax Audit Verification",
+      description:
+        "Upload and analyze tax documents for compliance verification",
+      longDescription:
+        "Comprehensive tax calculation verification with compliance checking, risk assessment, and actionable recommendations for tax optimization.",
+      icon: Calculator,
+      color: "bg-primary/10",
+      iconColor: "text-primary",
+      route: "/tax-audit",
+      features: [
+        "Progressive Tax Calculation",
+        "Compliance Checking",
+        "Risk Assessment",
+        "Document Analysis",
+      ],
+      acceptedDocs: ["Form 16", "ITR", "TDS Certificates", "Tax Returns"],
+    },
+    {
+      id: "salary-reconciliation",
+      title: "Salary Reconciliation",
+      description: "Compare and reconcile reported vs actual salary data",
+      longDescription:
+        "Advanced salary variance analysis with detailed reconciliation reports, adjustment recommendations, and compliance verification.",
+      icon: TrendingUp,
+      color: "bg-secondary/10",
+      iconColor: "text-secondary",
+      route: "/salary-reconciliation",
+      features: [
+        "Variance Analysis",
+        "Adjustment Detection",
+        "Compliance Review",
+        "Detailed Reporting",
+      ],
+      acceptedDocs: [
+        "Payslips",
+        "Bank Statements",
+        "HR Records",
+        "Salary Certificates",
+      ],
+    },
+    {
+      id: "professional-tax",
+      title: "Professional Tax Reconciliation",
+      description: "Verify professional tax declarations and payments",
+      longDescription:
+        "Professional tax compliance verification with penalty assessment, payment tracking, and regulatory compliance monitoring.",
+      icon: Scale,
+      color: "bg-audit-warning/10",
+      iconColor: "text-audit-warning",
+      route: "/professional-tax",
+      features: [
+        "Declaration Verification",
+        "Penalty Assessment",
+        "Payment Tracking",
+        "Compliance Monitoring",
+      ],
+      acceptedDocs: [
+        "P-Tax Forms",
+        "Payment Receipts",
+        "Challans",
+        "Declarations",
+      ],
+    },
+    {
+      id: "opening-balance",
+      title: "Opening Balance Verification",
+      description: "Verify accuracy of opening balance figures",
+      longDescription:
+        "Comprehensive balance verification with materiality assessment, variance analysis, and adjustment entry generation.",
+      icon: Scale,
+      color: "bg-audit-info/10",
+      iconColor: "text-audit-info",
+      route: "/opening-balance",
+      features: [
+        "Materiality Assessment",
+        "Variance Analysis",
+        "Risk Evaluation",
+        "Adjustment Entries",
+      ],
+      acceptedDocs: [
+        "Trial Balance",
+        "Ledgers",
+        "Audit Reports",
+        "Balance Confirmations",
+      ],
+    },
+    {
+      id: "bank-vouching",
+      title: "Bank Vouching",
+      description: "Reconcile bank statements with cash book records",
+      longDescription:
+        "Advanced bank reconciliation with automated vouching, discrepancy identification, and comprehensive audit trail.",
+      icon: CreditCard,
+      color: "bg-audit-success/10",
+      iconColor: "text-audit-success",
+      route: "/bank-vouching",
+      features: [
+        "Automated Reconciliation",
+        "Discrepancy Detection",
+        "Risk Assessment",
+        "Audit Trail",
+      ],
+      acceptedDocs: [
+        "Bank Statements",
+        "Cash Books",
+        "Passbooks",
+        "Journal Entries",
+      ],
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-accent/10">
       {/* Header */}
       <div className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-              <Shield className="h-6 w-6 text-primary" />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Audit Pro Dashboard
-              </h1>
-              <p className="text-muted-foreground">
-                Professional Auditing Tools & Financial Verification Suite
-              </p>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Audit Pro Dashboard
+            </h1>
+            <p className="text-lg text-muted-foreground mb-6">
+              Professional Auditing Tools & Financial Verification Suite
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Badge variant="outline" className="bg-primary/5">
+                <FileText className="h-3 w-3 mr-1" />
+                PDF Analysis
+              </Badge>
+              <Badge variant="outline" className="bg-secondary/5">
+                <Upload className="h-3 w-3 mr-1" />
+                Drag & Drop
+              </Badge>
+              <Badge variant="outline" className="bg-audit-success/5">
+                AI-Powered
+              </Badge>
+              <Badge variant="outline" className="bg-audit-info/5">
+                Instant Results
+              </Badge>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Tool 1: Tax Audit Verification */}
-          <Card className="col-span-full lg:col-span-1 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <Calculator className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">
-                    Tax Audit Verification
-                  </CardTitle>
-                  <CardDescription>
-                    Upload tax documents for verification
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FileUpload
-                id="tax-documents"
-                label="Tax Documents"
-                description="Upload Form 16, ITR, or other tax documents"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={3}
-                maxSize={10}
-                onFilesChange={setTaxDocuments}
-              />
-              <Button
-                onClick={handleTaxAudit}
-                className="w-full"
-                size="sm"
-                disabled={taxDocuments.length === 0 || taxProcessing}
+      <div className="container mx-auto px-4 py-12">
+        {/* Tools Grid */}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {auditTools.map((tool) => {
+            const IconComponent = tool.icon;
+            return (
+              <Card
+                key={tool.id}
+                className="group shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/20"
               >
-                {taxProcessing ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing Documents...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Analyze Tax Documents
-                  </>
-                )}
-              </Button>
+                <CardHeader className="pb-4">
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-xl ${tool.color} group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <IconComponent className={`h-6 w-6 ${tool.iconColor}`} />
+                    </div>
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
+                        {tool.title}
+                      </CardTitle>
+                      <CardDescription className="text-sm leading-relaxed">
+                        {tool.description}
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Long Description */}
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {tool.longDescription}
+                  </p>
 
-              {taxResult && (
-                <div className="space-y-3 pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">
-                      Compliance Status:
-                    </span>
-                    {getStatusBadge(
-                      taxResult.compliance,
-                      taxResult.compliance === "Compliant"
-                        ? "success"
-                        : "error",
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Tax Rate:</span>
-                      <p className="font-medium">{taxResult.taxRate}%</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        Calculated Tax:
-                      </span>
-                      <p className="font-medium">
-                        ₹{taxResult.calculatedTax.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
+                  {/* Key Features */}
                   <div>
-                    <span className="text-sm text-muted-foreground">
-                      Recommendations:
-                    </span>
-                    <ul className="mt-1 space-y-1">
-                      {taxResult.recommendations
-                        .slice(0, 2)
-                        .map((rec, index) => (
-                          <li
-                            key={index}
-                            className="text-xs text-muted-foreground flex items-start"
-                          >
-                            <span className="mr-2">•</span>
-                            {rec}
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Tool 2: Salary Reconciliation */}
-          <Card className="col-span-full lg:col-span-1 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                  <TrendingUp className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">
-                    Salary Reconciliation
-                  </CardTitle>
-                  <CardDescription>
-                    Upload salary documents for comparison
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FileUpload
-                id="reported-salary-docs"
-                label="Reported Salary Documents"
-                description="Upload payslips, salary certificates"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setReportedSalaryDocs}
-              />
-              <FileUpload
-                id="actual-salary-docs"
-                label="Actual Salary Documents"
-                description="Upload bank statements, pay records"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setActualSalaryDocs}
-              />
-              <Button
-                onClick={handleSalaryReconciliation}
-                className="w-full"
-                size="sm"
-                disabled={
-                  reportedSalaryDocs.length === 0 ||
-                  actualSalaryDocs.length === 0 ||
-                  salaryProcessing
-                }
-              >
-                {salaryProcessing ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing Documents...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Reconcile Salary Documents
-                  </>
-                )}
-              </Button>
-
-              {salaryResult && (
-                <div className="space-y-3 pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Status:</span>
-                    {getStatusBadge(
-                      salaryResult.status,
-                      salaryResult.status === "Matched" ? "success" : "warning",
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Variance:</span>
-                      <p
-                        className={`font-medium ${salaryResult.variance >= 0 ? "text-audit-success" : "text-audit-error"}`}
-                      >
-                        ₹{Math.abs(salaryResult.variance).toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Variance %:</span>
-                      <p
-                        className={`font-medium ${salaryResult.variance >= 0 ? "text-audit-success" : "text-audit-error"}`}
-                      >
-                        {Math.abs(salaryResult.variancePercentage)}%
-                      </p>
+                    <h4 className="text-sm font-semibold mb-3 text-foreground">
+                      Key Features
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {tool.features.map((feature, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center text-xs text-muted-foreground"
+                        >
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
+                          {feature}
+                        </div>
+                      ))}
                     </div>
                   </div>
+
+                  {/* Accepted Documents */}
                   <div>
-                    <span className="text-sm text-muted-foreground">
-                      Analysis:
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {salaryResult.comments}
-                    </p>
+                    <h4 className="text-sm font-semibold mb-3 text-foreground">
+                      Accepted Documents
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                      {tool.acceptedDocs.map((doc, index) => (
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs px-2 py-1"
+                        >
+                          {doc}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
-          {/* Tool 3: Professional Tax Reconciliation */}
-          <Card className="col-span-full lg:col-span-1 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-audit-warning/10">
-                  <Scale className="h-5 w-5 text-audit-warning" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Professional Tax</CardTitle>
-                  <CardDescription>
-                    Upload professional tax documents
-                  </CardDescription>
-                </div>
+                  {/* Action Button */}
+                  <Link to={tool.route} className="block">
+                    <Button
+                      className="w-full group-hover:bg-primary/90 transition-colors"
+                      size="lg"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Start Analysis
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Features Section */}
+        <div className="mt-20">
+          <Separator className="mb-12" />
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Why Choose Audit Pro?
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Professional-grade auditing tools designed for accuracy,
+              compliance, and efficiency
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="text-center space-y-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mx-auto">
+                <FileText className="h-8 w-8 text-primary" />
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FileUpload
-                id="declared-ptax-docs"
-                label="Declared P-Tax Documents"
-                description="Upload declarations, forms"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setDeclaredPTaxDocs}
-              />
-              <FileUpload
-                id="verified-ptax-docs"
-                label="Verified P-Tax Documents"
-                description="Upload payment receipts, challans"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setVerifiedPTaxDocs}
-              />
-              <Button
-                onClick={handleProfessionalTax}
-                className="w-full"
-                size="sm"
-                disabled={
-                  declaredPTaxDocs.length === 0 ||
-                  verifiedPTaxDocs.length === 0 ||
-                  ptaxProcessing
-                }
-              >
-                {ptaxProcessing ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing Documents...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Verify P-Tax Documents
-                  </>
-                )}
-              </Button>
+              <h3 className="text-lg font-semibold">Document Processing</h3>
+              <p className="text-sm text-muted-foreground">
+                Advanced PDF and image analysis with OCR technology for accurate
+                data extraction
+              </p>
+            </div>
 
-              {ptaxResult && (
-                <div className="space-y-3 pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Compliance:</span>
-                    {getStatusBadge(
-                      ptaxResult.complianceStatus,
-                      ptaxResult.complianceStatus === "Compliant"
-                        ? "success"
-                        : ptaxResult.complianceStatus === "Under-declared"
-                          ? "error"
-                          : "warning",
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Difference:</span>
-                      <p
-                        className={`font-medium ${ptaxResult.difference >= 0 ? "text-audit-error" : "text-audit-success"}`}
-                      >
-                        ₹{Math.abs(ptaxResult.difference).toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Penalty:</span>
-                      <p
-                        className={`font-medium ${ptaxResult.penaltyApplicable ? "text-audit-error" : "text-audit-success"}`}
-                      >
-                        {ptaxResult.penaltyApplicable ? "Yes" : "No"}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">
-                      Action Required:
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {ptaxResult.recommendedAction}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Tool 4: Opening Balance Verification */}
-          <Card className="col-span-full lg:col-span-1 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-audit-info/10">
-                  <Scale className="h-5 w-5 text-audit-info" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Opening Balance</CardTitle>
-                  <CardDescription>
-                    Upload balance verification documents
-                  </CardDescription>
-                </div>
+            <div className="text-center space-y-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/10 mx-auto">
+                <Shield className="h-8 w-8 text-secondary" />
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FileUpload
-                id="book-balance-docs"
-                label="Book Balance Documents"
-                description="Upload ledgers, trial balance"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setBookBalanceDocs}
-              />
-              <FileUpload
-                id="audited-balance-docs"
-                label="Audited Balance Documents"
-                description="Upload audit reports, confirmations"
-                accept=".pdf,.png,.jpg,.jpeg"
-                maxFiles={2}
-                maxSize={10}
-                onFilesChange={setAuditedBalanceDocs}
-              />
-              <Button
-                onClick={handleOpeningBalance}
-                className="w-full"
-                size="sm"
-                disabled={
-                  bookBalanceDocs.length === 0 ||
-                  auditedBalanceDocs.length === 0 ||
-                  balanceProcessing
-                }
-              >
-                {balanceProcessing ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing Documents...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Verify Balance Documents
-                  </>
-                )}
-              </Button>
+              <h3 className="text-lg font-semibold">Compliance Checking</h3>
+              <p className="text-sm text-muted-foreground">
+                Automated compliance verification against regulatory standards
+                and audit requirements
+              </p>
+            </div>
 
-              {balanceResult && (
-                <div className="space-y-3 pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Risk Level:</span>
-                    {getStatusBadge(
-                      balanceResult.riskLevel,
-                      balanceResult.riskLevel === "Low"
-                        ? "success"
-                        : balanceResult.riskLevel === "Medium"
-                          ? "warning"
-                          : "error",
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Variance:</span>
-                      <p
-                        className={`font-medium ${balanceResult.variance >= 0 ? "text-audit-success" : "text-audit-error"}`}
-                      >
-                        ₹{Math.abs(balanceResult.variance).toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Material:</span>
-                      <p
-                        className={`font-medium ${balanceResult.isMaterial ? "text-audit-error" : "text-audit-success"}`}
-                      >
-                        {balanceResult.isMaterial ? "Yes" : "No"}
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">
-                      Adjustment Entry:
-                    </span>
-                    <p className="text-xs text-muted-foreground mt-1 font-mono">
-                      {balanceResult.adjustmentEntry}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Tool 5: Bank Vouching */}
-          <Card className="col-span-full lg:col-span-2 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-audit-success/10">
-                  <CreditCard className="h-5 w-5 text-audit-success" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">Bank Vouching</CardTitle>
-                  <CardDescription>
-                    Upload bank and cash book documents
-                  </CardDescription>
-                </div>
+            <div className="text-center space-y-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-audit-success/10 mx-auto">
+                <TrendingUp className="h-8 w-8 text-audit-success" />
               </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FileUpload
-                  id="bank-statement-docs"
-                  label="Bank Statement Documents"
-                  description="Upload bank statements, passbooks"
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  maxFiles={3}
-                  maxSize={10}
-                  onFilesChange={setBankStatementDocs}
-                />
-                <FileUpload
-                  id="cash-book-docs"
-                  label="Cash Book Documents"
-                  description="Upload cash books, journals"
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  maxFiles={3}
-                  maxSize={10}
-                  onFilesChange={setCashBookDocs}
-                />
+              <h3 className="text-lg font-semibold">Real-time Analysis</h3>
+              <p className="text-sm text-muted-foreground">
+                Instant results with detailed variance analysis and risk
+                assessment
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-audit-info/10 mx-auto">
+                <Scale className="h-8 w-8 text-audit-info" />
               </div>
-              <Button
-                onClick={handleBankVouching}
-                className="w-full"
-                size="sm"
-                disabled={
-                  bankStatementDocs.length === 0 ||
-                  cashBookDocs.length === 0 ||
-                  bankProcessing
-                }
-              >
-                {bankProcessing ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing Documents...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Perform Bank Vouching
-                  </>
-                )}
-              </Button>
-
-              {bankResult && (
-                <div className="space-y-4 pt-4 border-t">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">
-                      Risk Assessment:
-                    </span>
-                    {getStatusBadge(
-                      bankResult.riskAssessment,
-                      bankResult.riskAssessment === "Low"
-                        ? "success"
-                        : bankResult.riskAssessment === "Medium"
-                          ? "warning"
-                          : "error",
-                    )}
-                  </div>
-                  <div className="grid grid-cols-3 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Difference:</span>
-                      <p
-                        className={`font-medium ${bankResult.difference >= 0 ? "text-audit-success" : "text-audit-error"}`}
-                      >
-                        ₹{Math.abs(bankResult.difference).toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        Reconciliation:
-                      </span>
-                      <p
-                        className={`font-medium ${bankResult.reconciliationRequired ? "text-audit-warning" : "text-audit-success"}`}
-                      >
-                        {bankResult.reconciliationRequired
-                          ? "Required"
-                          : "Not Required"}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Status:</span>
-                      <p
-                        className={`font-medium ${bankResult.reconciliationRequired ? "text-audit-warning" : "text-audit-success"}`}
-                      >
-                        {bankResult.reconciliationRequired
-                          ? "Needs Review"
-                          : "Balanced"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Possible Causes:
-                      </span>
-                      <ul className="mt-2 space-y-1">
-                        {bankResult.possibleCauses
-                          .slice(0, 3)
-                          .map((cause, index) => (
-                            <li
-                              key={index}
-                              className="text-xs text-muted-foreground flex items-start"
-                            >
-                              <span className="mr-2">•</span>
-                              {cause}
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Next Steps:
-                      </span>
-                      <ul className="mt-2 space-y-1">
-                        {bankResult.nextSteps.slice(0, 3).map((step, index) => (
-                          <li
-                            key={index}
-                            className="text-xs text-muted-foreground flex items-start"
-                          >
-                            <span className="mr-2">•</span>
-                            {step}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              <h3 className="text-lg font-semibold">Professional Reports</h3>
+              <p className="text-sm text-muted-foreground">
+                Comprehensive audit reports with actionable recommendations and
+                findings
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center">
-          <Separator className="mb-6" />
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-20 text-center">
+          <Separator className="mb-8" />
+          <p className="text-sm text-muted-foreground mb-2">
             Audit Pro Dashboard - Professional Financial Analysis & Verification
             Tools
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground">
             Always consult with qualified professionals for official audit
             procedures
           </p>
