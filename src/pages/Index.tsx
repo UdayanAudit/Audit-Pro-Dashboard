@@ -319,38 +319,51 @@ const Index = () => {
                     Salary Reconciliation
                   </CardTitle>
                   <CardDescription>
-                    Compare reported vs actual salary
+                    Upload salary documents for comparison
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Reported Salary (₹)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter reported salary"
-                  value={reportedSalary}
-                  onChange={(e) => setReportedSalary(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Actual Salary (₹)</label>
-                <Input
-                  type="number"
-                  placeholder="Enter actual salary"
-                  value={actualSalary}
-                  onChange={(e) => setActualSalary(e.target.value)}
-                />
-              </div>
+              <FileUpload
+                id="reported-salary-docs"
+                label="Reported Salary Documents"
+                description="Upload payslips, salary certificates"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setReportedSalaryDocs}
+              />
+              <FileUpload
+                id="actual-salary-docs"
+                label="Actual Salary Documents"
+                description="Upload bank statements, pay records"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setActualSalaryDocs}
+              />
               <Button
                 onClick={handleSalaryReconciliation}
                 className="w-full"
                 size="sm"
+                disabled={
+                  reportedSalaryDocs.length === 0 ||
+                  actualSalaryDocs.length === 0 ||
+                  salaryProcessing
+                }
               >
-                Reconcile Salary
+                {salaryProcessing ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing Documents...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Reconcile Salary Documents
+                  </>
+                )}
               </Button>
 
               {salaryResult && (
