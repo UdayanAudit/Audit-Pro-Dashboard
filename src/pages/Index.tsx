@@ -618,38 +618,53 @@ const Index = () => {
                 <div>
                   <CardTitle className="text-lg">Bank Vouching</CardTitle>
                   <CardDescription>
-                    Reconcile bank statement with cash book
+                    Upload bank and cash book documents
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Bank Statement Balance (₹)
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="Enter bank statement balance"
-                    value={bankStatement}
-                    onChange={(e) => setBankStatement(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Cash Book Balance (₹)
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder="Enter cash book balance"
-                    value={cashBook}
-                    onChange={(e) => setCashBook(e.target.value)}
-                  />
-                </div>
+                <FileUpload
+                  id="bank-statement-docs"
+                  label="Bank Statement Documents"
+                  description="Upload bank statements, passbooks"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  maxFiles={3}
+                  maxSize={10}
+                  onFilesChange={setBankStatementDocs}
+                />
+                <FileUpload
+                  id="cash-book-docs"
+                  label="Cash Book Documents"
+                  description="Upload cash books, journals"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  maxFiles={3}
+                  maxSize={10}
+                  onFilesChange={setCashBookDocs}
+                />
               </div>
-              <Button onClick={handleBankVouching} className="w-full" size="sm">
-                Perform Bank Vouching
+              <Button
+                onClick={handleBankVouching}
+                className="w-full"
+                size="sm"
+                disabled={
+                  bankStatementDocs.length === 0 ||
+                  cashBookDocs.length === 0 ||
+                  bankProcessing
+                }
+              >
+                {bankProcessing ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing Documents...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Perform Bank Vouching
+                  </>
+                )}
               </Button>
 
               {bankResult && (
