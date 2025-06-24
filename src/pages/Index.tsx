@@ -99,12 +99,7 @@ const Index = () => {
         "Risk Evaluation",
         "Adjustment Entries",
       ],
-      acceptedDocs: [
-        "Trial Balance",
-        "Ledgers",
-        "Audit Reports",
-        "Balance Confirmations",
-      ],
+      acceptedDocs: ["Trial Balance", "Balance"],
     },
     {
       id: "bank-vouching",
