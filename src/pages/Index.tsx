@@ -482,7 +482,7 @@ const Index = () => {
                       <p
                         className={`font-medium ${ptaxResult.difference >= 0 ? "text-audit-error" : "text-audit-success"}`}
                       >
-                        ���{Math.abs(ptaxResult.difference).toLocaleString()}
+                        ₹{Math.abs(ptaxResult.difference).toLocaleString()}
                       </p>
                     </div>
                     <div>
@@ -517,38 +517,51 @@ const Index = () => {
                 <div>
                   <CardTitle className="text-lg">Opening Balance</CardTitle>
                   <CardDescription>
-                    Verify opening balance accuracy
+                    Upload balance verification documents
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Book Balance (₹)</label>
-                <Input
-                  type="number"
-                  placeholder="Enter book balance"
-                  value={bookBalance}
-                  onChange={(e) => setBookBalance(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Audited Balance (₹)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter audited balance"
-                  value={auditedBalance}
-                  onChange={(e) => setAuditedBalance(e.target.value)}
-                />
-              </div>
+              <FileUpload
+                id="book-balance-docs"
+                label="Book Balance Documents"
+                description="Upload ledgers, trial balance"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setBookBalanceDocs}
+              />
+              <FileUpload
+                id="audited-balance-docs"
+                label="Audited Balance Documents"
+                description="Upload audit reports, confirmations"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={2}
+                maxSize={10}
+                onFilesChange={setAuditedBalanceDocs}
+              />
               <Button
                 onClick={handleOpeningBalance}
                 className="w-full"
                 size="sm"
+                disabled={
+                  bookBalanceDocs.length === 0 ||
+                  auditedBalanceDocs.length === 0 ||
+                  balanceProcessing
+                }
               >
-                Verify Balance
+                {balanceProcessing ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing Documents...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Verify Balance Documents
+                  </>
+                )}
               </Button>
 
               {balanceResult && (
