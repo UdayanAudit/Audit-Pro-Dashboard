@@ -223,25 +223,38 @@ const Index = () => {
                     Tax Audit Verification
                   </CardTitle>
                   <CardDescription>
-                    Verify tax calculations and compliance
+                    Upload tax documents for verification
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Taxable Income (₹)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="Enter taxable income"
-                  value={taxIncome}
-                  onChange={(e) => setTaxIncome(e.target.value)}
-                />
-              </div>
-              <Button onClick={handleTaxAudit} className="w-full" size="sm">
-                Calculate Tax
+              <FileUpload
+                id="tax-documents"
+                label="Tax Documents"
+                description="Upload Form 16, ITR, or other tax documents"
+                accept=".pdf,.png,.jpg,.jpeg"
+                maxFiles={3}
+                maxSize={10}
+                onFilesChange={setTaxDocuments}
+              />
+              <Button
+                onClick={handleTaxAudit}
+                className="w-full"
+                size="sm"
+                disabled={taxDocuments.length === 0 || taxProcessing}
+              >
+                {taxProcessing ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Processing Documents...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Analyze Tax Documents
+                  </>
+                )}
               </Button>
 
               {taxResult && (
