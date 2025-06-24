@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { FileUpload, type UploadedFile } from "@/components/ui/file-upload";
 import {
   Calculator,
   TrendingUp,
@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   XCircle,
   Info,
+  FileText,
 } from "lucide-react";
 import {
   calculateTaxAudit,
