@@ -117,12 +117,7 @@ const Index = () => {
         "Risk Assessment",
         "Audit Trail",
       ],
-      acceptedDocs: [
-        "Bank Statements",
-        "Cash Books",
-        "Passbooks",
-        "Journal Entries",
-      ],
+      acceptedDocs: ["Bank Statements", "Ledger"],
     },
   ];
 
