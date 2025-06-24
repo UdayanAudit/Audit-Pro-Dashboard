@@ -58,12 +58,7 @@ const Index = () => {
         "Compliance Review",
         "Detailed Reporting",
       ],
-      acceptedDocs: [
-        "Payslips",
-        "Bank Statements",
-        "HR Records",
-        "Salary Certificates",
-      ],
+      acceptedDocs: ["Salary Registers", "Salary Ledgers"],
     },
     {
       id: "professional-tax",
