@@ -52,6 +52,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        audit: {
+          success: "hsl(166 76% 37%)",
+          warning: "hsl(43 96% 56%)",
+          error: "hsl(0 84% 60%)",
+          info: "hsl(212 100% 47%)",
+          neutral: "hsl(215 16% 47%)",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
