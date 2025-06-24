@@ -40,7 +40,7 @@ const Index = () => {
         "Risk Assessment",
         "Document Analysis",
       ],
-      acceptedDocs: ["Form 16", "ITR", "TDS Certificates", "Tax Returns"],
+      acceptedDocs: ["Cash Flow Statement", "Cash book statement"],
     },
     {
       id: "salary-reconciliation",
